@@ -190,8 +190,9 @@ def find_in_screen(target: str, xywh: str | None = None, conf: str | None = None
     res = find_in_screen_multiple(target, xywh, conf).get(target)
     return res[0] if res else None
 
-def find_in_screen_yolo(model: str) -> List[dict[str, list[int]]] | None:
-    return _safe_get(f"{objectDetector_API_URL}/detect/yolo?req_model={model}")
+def find_in_screen_yolo(model: str) -> List[dict[str, list[int]]]:
+    res = _safe_get(f"{objectDetector_API_URL}/detect/yolo?req_model={model}")
+    return res if res else []
 
 def find_in_screen_multiple(targets: str, xywh: str | None = None, confs: str | None = None) -> dict:
     url = f"{objectDetector_API_URL}/detect/img_multiple?req_imgs={targets}"
