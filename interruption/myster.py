@@ -12,7 +12,6 @@ def handle_go_myster(stack = 0) :
     Rdelay_2(500)
 
     detected_result = find_in_screen("mystervil")
-    print(f"[handle_go_myster] detected_result: {detected_result}")
     if detected_result is None :
         handle_go_myster(stack + 1)
         return
