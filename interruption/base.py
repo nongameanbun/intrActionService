@@ -1,7 +1,6 @@
 from gateway import *
 
 def handle_exception(event=None):
-    send_message("An exception has occurred.")
     if event is not None:
         while not event.is_set():
             time.sleep(0.1)

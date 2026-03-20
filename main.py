@@ -15,6 +15,7 @@ def cleanup_intr() :
     global current_intr_thread
     with intr_lock :
         if current_intr_thread and not current_intr_thread.is_alive() :
+            print(f"[IntrAction] Cleaning up interrupt thread: {current_intr_thread}")
             current_intr_thread = None
 
 
@@ -36,14 +37,10 @@ def run_interruption(intr_func) :
         res = intr_func()
     
         if res == "exit" :
-            print("[intr] Interrupt returned 'exit' → killing main process")
             kill_main()
         elif res == "wait" :
-            print("[intr] Interrupt returned 'wait' → waiting for /continue")
-            # main 프로세스는 suspended 상태 유지, /continue 호출 대기
+            pass
         else :
-            # "go" 또는 기타 → 바로 resume
-            print(f"[intr] Interrupt returned '{res}' → resuming main process")
             resume_main()
     finally:
         with intr_lock:
@@ -51,6 +48,7 @@ def run_interruption(intr_func) :
 
 @app.post("/add_intr/{intr_name}", summary="인터럽트 추가")
 async def add_intr(intr_name : str) :
+    print(f"[IntrAction/main.py] Received interrupt request: {intr_name}")
     global current_intr_thread
 
     cleanup_intr()
@@ -58,6 +56,10 @@ async def add_intr(intr_name : str) :
     intr_func = intr_functions.get(intr_name, None)
     if not intr_func :
         return {"resp": -1, "message": f"Unknown interrupt: {intr_name}"}
+
+    if is_waiting_for_continue() :
+        print("[IntrAction] Main process is not waiting for continue, cannot start interrupt")
+        return {"resp": -1, "message": "Main process is not waiting for continue"}
 
     if not suspend_main() :
         return {"resp": -1, "message": "Failed to suspend main process"}
@@ -75,6 +77,7 @@ async def add_intr(intr_name : str) :
 
 @app.post("/continue", summary="일시정지 해제")
 async def continue_intr() :
+    print("Continue requested")
     cleanup_intr()
 
     with intr_lock :
