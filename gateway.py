@@ -29,7 +29,6 @@ def _safe_post(url: str, timeout: int = 10) -> Any | None:
     try:
         r = requests.post(url, timeout=timeout).json()
         val = r.get('resp', None)
-        print(f"[main/gateway] POST {url} returned: {val}")
         if val is None :
             raise ValueError(f"POST {url} returned no 'resp' field")
         return val
@@ -62,7 +61,6 @@ def _post_and_wait(url: str) -> None:
     """POST → resp(ms) 파싱 → precise_wait. resp 파싱 실패 시 대기 생략."""
     start_t = time.perf_counter()
     resp = _safe_post(url)
-    print(f"[main/gateway] _post_and_wait got response: {resp}")
 
     try :
         if resp is None :
@@ -155,7 +153,6 @@ def send_message(message: str, token: str | None = None):
         response = requests.post(url, timeout=5)
         return response.status_code == 200
     except Exception as e:
-        print(f"[gateway] send_message failed: {e}")
         return False
 
 def clear_alarm():
@@ -213,14 +210,12 @@ def get_running_build():
     return None
 
 def get_main_pid():
-    print(f"[gateway] Requesting main PID from {mainAction_API_URL}/pid")
     val = _safe_get(f"{mainAction_API_URL}/pid")
     return int(val) if val is not None else -1
 
 def get_main_process():
     try:
         pid = get_main_pid()
-        print(pid)
         if pid <= 0:
             return None
         proc = psutil.Process(pid)
@@ -235,15 +230,12 @@ def is_waiting_for_continue():
     if not proc:
         return False
     
-    print(proc.status())
     if proc.status() == "stopped":
-        print("[gateway] Main process is currently stopped (waiting for continue)")
         return True
     return False
 
 def suspend_main():
     proc = get_main_process()
-    print(proc)
     if proc:
         proc.suspend()
         print(f"[process] Suspended PID {proc.pid}")
