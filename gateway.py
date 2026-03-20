@@ -258,6 +258,7 @@ def kill_main():
     if proc:
         proc.kill()
         print(f"[process] Killed PID {proc.pid}")
+        _safe_post(f"{mainAction_API_URL}/weeing/stop")
         return True
     print("[process] No main process to kill")
     return False
