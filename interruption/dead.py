@@ -6,10 +6,10 @@ handle_dead_function = {
 }
 
 def handle_dead() :
-    Rdelay_2(5000)
-    cur_build, cur_build_sys = get_running_build()['resp'], get_running_build()['system']
-    press_key_with_delay(cur_build_sys['npc_key'], 1500)
-    Rdelay_2(5000)
+    # Rdelay_2(5000)
+    # cur_build, cur_build_sys = get_running_build()['resp'], get_running_build()['system']
+    # press_key_with_delay(cur_build_sys['npc_key'], 1500)
+    # Rdelay_2(5000)
     return "wait"
     # Rdelay_2(5000)
     # cur_build, cur_build_sys = get_running_build()['resp'], get_running_build()['system']
