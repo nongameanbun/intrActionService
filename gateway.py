@@ -41,9 +41,9 @@ def _safe_get(url: str, timeout: int = 10) -> Any | None:
     try:
         r = requests.get(url, timeout=timeout).json()
         val = r.get('resp', None)
-        if val :
-            return val
-        raise ValueError(f"GET {url} returned no 'resp' field")
+        if val is None :
+            raise ValueError(f"GET {url} returned no 'resp' field")
+        return val
     except Exception as e:
         # print(f"[gateway] GET {url} failed: {e}")
         return None
@@ -132,7 +132,8 @@ def check_pos() -> List[tuple[int, int]] | None:
 
 def get_exp_cycle() -> int:
     res = _safe_get(f"{statusChecker_API_URL}/cycle/get")
-    return res if res is not None else -1
+    print(res)
+    return res if res != None else -1
 
 def set_exp_cycle(cycle: int) -> None:
     _safe_post(f"{statusChecker_API_URL}/cycle/set?cycle={cycle}")
