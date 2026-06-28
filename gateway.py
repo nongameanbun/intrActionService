@@ -8,7 +8,7 @@ import psutil
 
 import os, dotenv
 
-dotenv.load_dotenv()
+dotenv.load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env'))
 
 inputHandler_API_URL    = f"http://127.0.0.1:{int(os.getenv('inputHandler_API_PORT'))}"
 statusChecker_API_URL   = f"http://127.0.0.1:{int(os.getenv('statusChecker_API_PORT'))}"
@@ -20,6 +20,7 @@ streaning_API_URL       = f"http://127.0.0.1:{int(os.getenv('streaning_API_PORT'
 objectDetector_API_URL  = f"http://127.0.0.1:{int(os.getenv('objectDetector_API_PORT'))}"
 runeSolver_API_URL      = f"http://127.0.0.1:{int(os.getenv('runeSolver_API_PORT'))}"
 agentServer_API_URL     = f"http://127.0.0.1:{int(os.getenv('agentServer_API_PORT'))}"
+violSolver_API_URL      = f"http://127.0.0.1:{int(os.getenv('violSolver_API_PORT'))}"
 
 
 # ─── helpers ───
@@ -267,6 +268,29 @@ def kill_main():
 def _goto_point(x, y, tolerance = 1):
     resp = _safe_post(f"{mainAction_API_URL}/goto_point?x={x}&y={y}&tolerance={tolerance}")
     assert resp == -1, "Failed goto_point"
+
+# ─── violSolver ───
+
+def viol_ready() -> None:
+    _safe_post(f"{violSolver_API_URL}/ready")
+
+def viol_appear() -> dict | None:
+    return _safe_post(f"{violSolver_API_URL}/appear")
+
+def viol_shuffle_start() -> dict | None:
+    return _safe_post(f"{violSolver_API_URL}/shuffle_start")
+
+def viol_shuffle_stop() -> dict | None:
+    return _safe_post(f"{violSolver_API_URL}/shuffle_stop")
+
+def viol_game_end() -> None:
+    _safe_post(f"{violSolver_API_URL}/game_end")
+
+def viol_exception() -> None:
+    _safe_post(f"{violSolver_API_URL}/exception")
+
+def viol_status() -> dict | None:
+    return _safe_get(f"{violSolver_API_URL}/status")
 
 # ─── agentServer ───
 
