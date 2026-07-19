@@ -211,7 +211,8 @@ def find_in_screen_multiple(targets: str, xywh: str | None = None, confs: str | 
         url += f"&xywh={xywh}"
     if confs is not None:
         url += f"&confs={confs}"
-    return _safe_get(url)
+    res = _safe_get(url)
+    return res if res else {}
 
 # ─── mainAction / process ───
 
