@@ -156,14 +156,18 @@ def capture_off() -> None:
 
 # ─── alarmHandler ───
 
-def send_message(message: str, token: str | None = None):
-    url = f"{alarmHandler_API_URL}/send_message?message={message}"
-    if token is not None:
-        url += f"&token={token}"
+def send_message(message: str) -> bool:
+    """로컬 alarmHandler로 메시지를 넘긴다 — alarmHandler가 내부적으로 cloudflare(/message/report)에 연결한다."""
     try:
-        response = requests.post(url, timeout=5)
-        return response.status_code == 200
-    except Exception as e:
+        response = requests.post(
+            f"{alarmHandler_API_URL}/send_message",
+            params={"message": message},
+            timeout=5,
+        )
+        if response.status_code != 200:
+            return False
+        return response.json().get("resp") == 0
+    except Exception:
         return False
 
 def clear_alarm():
@@ -211,7 +215,8 @@ def find_in_screen_multiple(targets: str, xywh: str | None = None, confs: str | 
         url += f"&xywh={xywh}"
     if confs is not None:
         url += f"&confs={confs}"
-    return _safe_get(url)
+    res = _safe_get(url)
+    return res if res else {}
 
 # ─── mainAction / process ───
 
