@@ -156,12 +156,12 @@ def capture_off() -> None:
 
 # ─── alarmHandler ───
 
-def send_message(message: str) -> bool:
+def send_message(message: str, severity: str = "low") -> bool:
     """로컬 alarmHandler로 메시지를 넘긴다 — alarmHandler가 내부적으로 cloudflare(/message/report)에 연결한다."""
     try:
         response = requests.post(
             f"{alarmHandler_API_URL}/send_message",
-            params={"message": message},
+            params={"message": message, "severity": severity},
             timeout=5,
         )
         if response.status_code != 200:
