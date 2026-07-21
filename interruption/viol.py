@@ -190,7 +190,7 @@ def handle_viol():
         viol_game_end()
         print("[viol] 게임 정상 완료")
         time.sleep(5)
-        press_key("enter")
+        press_key_with_delay("enter", 100)
 
     except Exception as e:
         print(f"[viol] 예외 발생: {e}")

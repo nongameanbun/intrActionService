@@ -19,15 +19,10 @@ def cleanup_intr() :
             current_intr_thread = None
 
 
-def sound_alert():
-    winsound.Beep(880, 400)
-    winsound.Beep(880, 400)
+
 
 def run_interruption(intr_func) :
     global last_intr_result, current_intr_thread
-
-    for _ in range(3) :
-        sound_alert()
 
     press_key_with_delay("f11", 100)
         
@@ -70,7 +65,7 @@ async def add_intr(intr_name : str) :
             return {"resp": -1, "message": "Another interrupt is already running"}
 
         current_intr_thread = Thread(target=run_interruption, args=(intr_func,), daemon=True)
-        send_message(f"Interrupt '{intr_name}' started")
+        send_message(f"Interrupt '{intr_name}' started", severity="high")
         current_intr_thread.start()
 
     return {"resp": 0, "message": f"Interrupt '{intr_name}' started"}
