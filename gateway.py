@@ -205,8 +205,17 @@ def find_in_screen(target: str, xywh: str | None = None, conf: str | None = None
     res = find_in_screen_multiple(target, xywh, conf).get(target)
     return res[0] if res else None
 
-def find_in_screen_yolo(model: str) -> List[dict[str, list[int]]]:
-    res = _safe_get(f"{objectDetector_API_URL}/detect/yolo?req_model={model}")
+def find_in_screen_yolo(model: str, xywh: str | None = None, conf: float | None = None) -> List[dict]:
+    '''
+    returns [{"center" : [x, y], "xywh" : [x, y, w, h], "cls" : name, "conf" : score}, ...]
+    좌표는 xywh로 지정한 캡처 영역 기준이다.
+    '''
+    url = f"{objectDetector_API_URL}/detect/yolo?req_model={model}"
+    if xywh is not None:
+        url += f"&xywh={xywh}"
+    if conf is not None:
+        url += f"&conf={conf}"
+    res = _safe_get(url)
     return res if res else []
 
 def find_in_screen_multiple(targets: str, xywh: str | None = None, confs: str | None = None) -> dict:
