@@ -1,5 +1,5 @@
 def liecheck_pipeline() :
-    pass
+    return "wait"
 
 def handle_liecheck() :
     return liecheck_pipeline()
