@@ -25,12 +25,13 @@ def run_interruption(intr_func) :
     global last_intr_result, current_intr_thread
 
     press_key_with_delay("f11", 100)
-        
+    capture_off()  # statusChecker 폴링 정지 — 인터럽트 핸들러가 자체 캡처하는 동안 중복 캡처 방지
+
     try:
         releaseAll()
-    
+
         res = intr_func()
-    
+
         if res == "exit" :
             kill_main()
         elif res == "wait" :
@@ -38,6 +39,7 @@ def run_interruption(intr_func) :
         else :
             resume_main()
     finally:
+        capture_on()  # statusChecker 폴링 재개
         with intr_lock:
             current_intr_thread = None
 
