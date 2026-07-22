@@ -154,6 +154,13 @@ def capture_on() -> None:
 def capture_off() -> None:
     _safe_post(f"{statusChecker_API_URL}/capture/off")
 
+def exp_watch_pause() -> None:
+    """capture_off와 달리 exp 정체 감지만 끈다 — liecheck/viol/shape/elbo/dead는 계속 감지된다."""
+    _safe_post(f"{statusChecker_API_URL}/capture/exp/pause")
+
+def exp_watch_resume() -> None:
+    _safe_post(f"{statusChecker_API_URL}/capture/exp/resume")
+
 # ─── alarmHandler ───
 
 def send_message(message: str, severity: str = "low") -> bool:
@@ -343,7 +350,8 @@ def reset_external_states():
     """외부 서비스 상태를 모두 초기화 (시작/종료 시 호출)"""
     Error_list = []
     pipeline = [
-        capture_off, 
+        capture_off,
+        exp_watch_resume,  # pause 중 워커가 강제 종료돼도 다음 세션에 안 남도록 안전망
         releaseAll,
         clear_status,
         clear_rune,
