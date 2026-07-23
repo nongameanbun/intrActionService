@@ -35,7 +35,10 @@ def run_interruption(intr_func) :
         if res == "exit" :
             kill_main()
         elif res == "wait" :
-            pass
+            # 프로세스가 suspend된 채로 남아있는 동안(유저가 재개하기 전) exp가
+            # 안 움직이는 게 당연해서, exp-watch를 꺼두지 않으면 재개 전/직후에
+            # exception이 재발동한다. 실제 재개는 /continue에서 처리.
+            exp_watch_pause()
         else :
             resume_main()
     finally:
@@ -82,6 +85,9 @@ async def continue_intr() :
             return {"resp": -1, "message": "Interrupt still running"}
 
     if resume_main() :
+        # exp-watch 재개 + status.exception 덱 clear — suspend 중 쌓인
+        # "정체" 판정이 재개 직후 재발동으로 이어지지 않도록.
+        exp_watch_resume()
         return {"resp": 0, "message": "Main process resumed"}
     return {"resp": -1, "message": "No main process to resume"}
 
